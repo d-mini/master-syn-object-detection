@@ -1,0 +1,23 @@
+camera:
+  radius_sets:
+    - [1, 4]
+    - [6, 9]
+
+  poses_per_set: 2
+
+  resolution:
+    width: 640
+    height: 640
+
+sampling:
+  max_target_objs: 5
+  max_distractor_objs: 15
+  min_distractor_objs: 5
+  dup_prob: 0.1
+  neg_ratio: 0.1
+  min_distance: 0.01 # distance between objects
+  max_distance: 1.5
+
+rendering:
+  num_samples: 64
+  default_background_color: [0.2, 0.2, 0.2]
