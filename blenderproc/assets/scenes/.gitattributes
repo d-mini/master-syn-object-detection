@@ -1,3 +1,6 @@
 apartment.blend filter=lfs diff=lfs merge=lfs -text
 basement.blend filter=lfs diff=lfs merge=lfs -text
 warehouse.blend filter=lfs diff=lfs merge=lfs -text
+city.blend filter=lfs diff=lfs merge=lfs -text
+construction.blend filter=lfs diff=lfs merge=lfs -text
+garden.blend filter=lfs diff=lfs merge=lfs -text
