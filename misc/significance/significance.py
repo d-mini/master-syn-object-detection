@@ -7,6 +7,13 @@ from statsmodels.stats.multitest import multipletests
 # ------------------------------------------------------------
 # 1) Friedman + Kendall's W (Effektstärke)
 # ------------------------------------------------------------
+def kendalls_W_from_friedman(stat, n, k):
+    if k <= 1 or n <= 0:
+        return float("nan")
+    W = float(stat) / (float(n) * float(k - 1))
+    # numerisch einklemmen (Rundungsfehler)
+    return max(0.0, min(1.0, W))
+
 def friedman_with_kendallW(X: np.ndarray):
     """
     X: shape (n_seeds, k_varianten), höhere Werte = besser.
@@ -14,9 +21,8 @@ def friedman_with_kendallW(X: np.ndarray):
     """
     n, k = X.shape
     stat, p = friedmanchisquare(*[X[:, j] for j in range(k)])
-    W = stat / (n * k * (k - 1)) if k > 1 else np.nan
+    W = kendalls_W_from_friedman(stat, n, k)
     return stat, p, W
-
 
 # ------------------------------------------------------------
 # 2) Familie testen: Baseline vs. alle Varianten (Wilcoxon, ein-/zweiseitig), Holm
@@ -40,7 +46,7 @@ def test_family_wilcoxon(df: pd.DataFrame,
     if baseline_col not in num_cols:
         raise ValueError(f"Baseline-Spalte '{baseline_col}' ist nicht numerisch.")
     variants_no_base = [c for c in num_cols if c not in (seed_col, baseline_col, "DA_WCT2_DR_Hin1","DA_FCUT_DR_Hin1")]
-    if baseline_col == "DR_Hin1":  # Sonderfall Background_R als Baseline
+    if baseline_col == "DR_Hin1":
         variants_no_base = [c for c in num_cols if c in ("DA_WCT2_DR_Hin1","DA_FCUT_DR_Hin1")]
 
     rows = []
@@ -50,9 +56,8 @@ def test_family_wilcoxon(df: pd.DataFrame,
         delta_mean   = float(np.mean(d)) if d.size else np.nan
         delta_median = float(np.median(d)) if d.size else np.nan
 
-        # Wilcoxon: zero_method='pratt' behält echte Nullen, method='auto' wählt exact/approx
         res = wilcoxon(df[baseline_col].to_numpy(), df[v].to_numpy(),
-                       zero_method="wilcox",  # echte Nullen behalten
+                       zero_method="wilcox",
                        alternative=alternative,
                        method="exact")
         p_raw = float(res.pvalue)
@@ -72,9 +77,6 @@ def test_family_wilcoxon(df: pd.DataFrame,
     out["p_holm"] = multipletests(out["p_raw"].values, method="holm")[1]
     out["signif"] = out["p_holm"] < 0.05
 
-    # Sortierung: erst p_holm, dann (bei Greater) absteigend delta_median, sonst aufsteigend
-    asc_delta = (alternative == "less")
-    out = out.sort_values(["p_holm", "delta_median"], ascending=[True, asc_delta]).reset_index(drop=True)
     return out
 
 
