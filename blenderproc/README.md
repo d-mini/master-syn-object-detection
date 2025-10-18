@@ -2,7 +2,7 @@
 Generierung synthetischer Daten mit BlenderProc
 =========================================================
 
-Dieser Unterordner enthält BlenderProc-Skripte zur Erzeugung synthetischer Trainingsdaten für die Objektdetektion.
+Dieser Unterordner enthält BlenderProc-Skripte zur Erzeugung synthetischer Trainingsdaten für die Experimente der Masterarbeit.
 
 Ordner-Struktur
 ------------------------------------
@@ -42,7 +42,7 @@ blenderproc run scripts/dr_mix.py --scenario 1 --scene city
 
 Die generierten Bilder werden im Verzeichnis `output/` gespeichert.
 
-`--scenario` ist für alle Skripte erforderlich. `--inst-per-class` kann für alle Skripte gesetzt werden (Standard: 1).
+`--scenario` ist für alle Skripte erforderlich. `--inst-per-class` kann für alle Skripte gesetzt werden (Default: 1).
 
 Die Datei `scripts/config.yaml` definiert gemeinsame Einstellungen wie Kamerauflösung und die (maximale) Anzahl an Samples, die pro Pixel gerendert werden.
 
